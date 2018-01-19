@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html,body{
+            margin:0;
+        }
+        body{
+            height: 100%;
+            background-image: url(1.jpg);
+            background-size: cover;
+        }
+        ul{
+            padding:0;
+            margin:0;
+            list-style:none;
+            overflow: hidden;
+        }
+        .interface{
+            width: 360px;
+            height: 500px;
+            border:1px solid rgba(255,255,255,0.5);
+            margin:50px auto 0;
+            background-color:rgba(0,0,0,0.6);
+        }
+        .calen-time{
+            width:100%;
+            height: 112px;
+            border-bottom:1px solid #c3cace;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            padding: 15px 0 0 25px;
+            box-sizing:border-box;
+        }
+        .cal-time{
+            font-size: 34px;
+            color:#fff;
+        }
+        .cal-date{
+            font-size: 18px;
+            color:#429ce3;
+        }
+        .content .con-head{
+            height: 41px;
+            width:100%;
+            margin-top: 5px;
+            display:flex;
+            box-sizing:border-box;
+            padding:0 28px 0 24px;
+            overflow: hidden;
+        }
+        .con-head .con-year{
+            width: 100px;
+            line-height: 41px;
+            font-size:18px;
+            color:#fff;
+            margin-right: 130px;
+        }
+        .prev, .next{
+            width: 10px;
+            height: 10px;
+            border-top:2px solid #fff;
+            border-left:2px solid #fff;
+            margin: 18px 15px 0;
+            transform: rotate(45deg);
+        }
+        .next{
+            border:0;
+            margin-top: 11px;
+            border-bottom:2px solid #fff;
+            border-right:2px solid #fff;
+        }
+        .box1{
+            overflow: hidden;
+            height: 266px;
+        }
+        .matter table{
+            overflow: hidden;
+            height: 266px;
+        }
+        .matter tbody{
+            /*position: absolute;*/
+            /*top:250px;*/
+            /*margin-top: 300px;*/
+            display: block;
+        }
+        .week span{
+            display: inline-block;
+            width: 46px;
+            height: 40px;
+            line-height: 40px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 14px;
+            color:#fff;
+        }
+        .matter thead th{
+             width: 46px;
+             height: 40px;
+             box-sizing: border-box;
+             text-align: center;
+             font-size: 14px;
+             color:#fff;
+
+         }
+        .matter tbody td{
+            width: 46px;
+            height: 40px;
+            line-height: 36px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 14px;
+            color:#fff;
+            border:2px solid transparent;
+            /*box-shadow: inset 0 0 0 2px #000;*/
+        }
+        .matter tbody td:hover{
+          border:2px solid #949292;
+        }
+    </style>
+</head>
+<body>
+<div class="interface">
+<div class="calen-time">
+    <span class="cal-time">15:20:34</span>
+    <span class="cal-date">2017年9月27日</span>
+</div>
+    <ul class="content">
+    <li class="con-head">
+        <span class="con-year">2017年9月</span>
+        <span class="prev"></span>
+        <span class="next"></span>
+    </li>
+        <li class="week">
+            <span>一</span>
+            <span>二</span>
+            <span>三</span>
+            <span>四</span>
+            <span>五</span>
+            <span>六</span>
+            <span>日</span>
+        </li>
+    <li class="box1">
+        <table border = '0' align = 'center' class="matter">
+            <tbody align="center"></tbody>
+        </table>
+    </li>
+    </ul>
+</div>
+<script>
+
+    //生成日期部分
+    var tbody = document.querySelector('tbody');
+    var str='';
+    for(var x=0;x<6;x++){
+        str +=`<tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>`
+    }
+    tbody.innerHTML = str;
+
+    //获取界面元素
+    var calTime = document.querySelector('.cal-time');
+    var calDate = document.querySelector('.cal-date');
+    var conYear =document.querySelector('.con-year');
+    var cell = document.querySelectorAll('td');
+    var nowWek;
+    var data ={};
+    var onOff = true;
+    console.log(cell);
+
+//    //cell的点击事件
+    for(var l=0;l<cell.length;l++){
+        (function (l){
+            cell[l].onclick = function(){
+
+                for(var z=0;z<cell.length;z++){
+                    cell[z].style['border-color'] = '';
+                }
+
+                cell[l].style['border-color'] = '#2689d7';
+                onOff = false;
+
+                cell[data.d+nowWek-1].style['box-shadow'] = '';
+                if(l === (data.d+nowWek-1) ){
+                    cell[data.d+nowWek-1].style['box-shadow'] = 'inset 0 0 0 2px #000';
+                    onOff = !onOff;
+                }
+            };
+        })(l);
+    }
+
+    //头部时间
+    clock();
+    setInterval(clock,500);
+
+    function clock(){
+        var now = new Date();
+        var y = now.getFullYear();
+        var m = now.getMonth() + 1;
+        var d = now.getDate();
+        var hours = now.getHours();
+        var mins = now.getMinutes();
+        var secs = now.getSeconds();
+
+        data.y = y;
+        data.m = m;
+        data.d = d;
+//      console.log(data.y,data.m,data.d);
+        calTime.innerHTML = add0(hours) + ':' + add0(mins) + ':' + add0(secs);
+        calDate.innerHTML = add0(y) + '年' + add0(m) + '月' + add0(d) + '日';
+        kalendar();
+    }
+    //补0
+    function add0(n){
+        return n < 10 ? '0' + n :'' + n;
+    }
+
+    //prev和next
+    var prev = document.querySelector('.prev');
+    var next = document.querySelector('.next');
+    var num = data.m;
+    var numb = 0;
+
+    prev.onclick = function (){
+        num = num === 1 ? 12 : --num;
+        console.log(num);
+        kalendar();
+        if(num === 1){
+            numb--;
+        }
+    };
+    next.onclick = function (){
+        num = num === 12 ? 1 : ++num;
+
+        kalendar();
+        if(num === 12){
+            numb++;
+        }
+    };
+
+    kalendar();
+    //日历部分
+    function kalendar(){
+        conYear.innerHTML = add0(data.y + numb) + '年' + (num) + '月';
+        var lastDay = new Date(data.y + numb,num,0);
+        var firstDay = new Date(data.y + numb,num-1,1);
+        var lastMon = new Date(data.y + numb,num-1,0);
+        var numDay = lastDay.getDate();
+        var nowWeek =  firstDay.getDay() !==0? firstDay.getDay()-1:6;
+        var lastMonDay = lastMon.getDate();
+//        console.log(firstDay, lastDay, numDay,nowWeek);
+
+        for(var z=0;z<cell.length;z++){
+//            cell[z].style['border-color'] = '';
+            cell[z].style['box-shadow'] = '';
+            cell[z].style['background-color'] = '';
+            cell[z].style['color'] = '';
+        }
+        for(var i=0;i<numDay;i++){
+            cell[nowWeek+i].innerHTML = i+1;
+        }
+        console.log(numDay,nowWeek);
+        for(var k=0;k<nowWeek;k++){
+            cell[k].innerHTML =lastMonDay - nowWeek + k + 1;
+            cell[k].style.color = '#a1a196';
+        }
+        for(var j=0;j<(41-nowWeek-numDay+1);j++){
+            cell[nowWeek+numDay+j].innerHTML = j+1;
+            cell[nowWeek+numDay+j].style.color = '#a1a196';
+        }
+            nowWek = nowWeek;
+        if(num === data.m && data.d && data.y === data.y+ numb){
+            cell[data.d + nowWeek-1].style['background-color'] = '#0078d7';
+        }
+        if(num === data.m && data.d && onOff && data.y === data.y+ numb){
+            cell[data.d + nowWeek-1].style['box-shadow'] = 'inset 0 0 0 2px #000';
+        }
+    }
+</script>
+</body>
+</html>
